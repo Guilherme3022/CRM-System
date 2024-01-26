@@ -1,4 +1,4 @@
-package Clientes;
+package Clients;
 
 public class Client {
     private String ssn;
