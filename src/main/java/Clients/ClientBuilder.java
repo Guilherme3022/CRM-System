@@ -1,10 +1,11 @@
 package Clients;
+
+import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
-import java.time.*;
 
-public class Client {
+public class ClientBuilder {
     private String ssn;
     private String fullName;
     private String email;
@@ -13,7 +14,7 @@ public class Client {
     private String phoneNumber;
     private int age;
 
-    public Client(String fullName, String birthDate, String ssn, String email, String phoneNumber, String address) {
+    public ClientBuilder personalInformation(String fullName, String birthDate, String ssn) {
         this.fullName = fullName;
         this.birthDate = birthDate;
         try {
@@ -22,9 +23,13 @@ public class Client {
             System.out.println("Error: " + e.getMessage());
         }
         this.ssn = ssn;
+        return this;
+    }
+    public ClientBuilder onlyAdresses(String email, String phoneNumber, String address){
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        return this;
     }
     private int ageCalculator(String birthDate){
         try {
@@ -90,4 +95,13 @@ public class Client {
         return "Client's data:\nName: "+getFullName()+"\nBirth date: "+getBirthDate()+"\nAge: "+getAge()+"\nSSN: "
                 +getSsn()+"\nEmail address: "+getEmail()+"\nPhone number: "+getPhoneNumber()+"\nZip address: "+getAddress();
     }
+    public String toStringPersonalinformation(){
+        return "Client's data:\nName: "+getFullName()+"\nBirth date: "+getBirthDate()+"\nAge: "+getAge()+"\nSSN: "
+                +getSsn();
+    }
+    public String toStringAdresses(){
+        return "Email address: "+getEmail()+"\nPhone number: "+getPhoneNumber()+"\nZip address: "+getAddress();
+    }
 }
+
+
