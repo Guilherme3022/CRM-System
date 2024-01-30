@@ -17,11 +17,7 @@ public class ClientBuilder {
     public ClientBuilder personalInformation(String fullName, String birthDate, String ssn) {
         this.fullName = fullName;
         this.birthDate = birthDate;
-        try {
-            this.age =ageCalculator(birthDate);
-        }catch (IllegalArgumentException e){
-            System.out.println("Error: " + e.getMessage());
-        }
+        this.age =ageCalculator(birthDate);
         this.ssn = ssn;
         return this;
     }
@@ -31,18 +27,30 @@ public class ClientBuilder {
         this.address = address;
         return this;
     }
-    private int ageCalculator(String birthDate){
+    private LocalDate validateAndParseDate(String birthDate) {
         try {
             DateTimeFormatter americanFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
             LocalDate dateOfBirth = LocalDate.parse(birthDate, americanFormat);
+
             if (dateOfBirth.isAfter(LocalDate.now())) {
-                throw new RuntimeException("birth date in the future is not valid");
+                throw new RuntimeException("Birth date in the future is not valid");
             }
-            Period period = Period.between(dateOfBirth, LocalDate.now());
-            return period.getYears();
-        }catch (DateTimeParseException e ){
+
+            return dateOfBirth;
+        } catch (DateTimeParseException e) {
             throw new RuntimeException("Invalid date format. Please use the format MM/dd/yyyy.");
         }
+    }
+
+    private int ageCalculator(String birthDate) {
+        try {
+            LocalDate dateOfBirth = validateAndParseDate(birthDate);
+            Period period = Period.between(dateOfBirth, LocalDate.now());
+            return period.getYears();
+        }catch (IllegalArgumentException e){
+            System.out.println("Error: " + e.getMessage());
+        }
+        return 0;
     }
     public String getSsn(){
         return this.ssn;
