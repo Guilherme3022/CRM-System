@@ -4,7 +4,7 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.time.*;
 
-public class Client {
+public class ClientTest {
     private String ssn;
     private String fullName;
     private String email;
@@ -13,41 +13,32 @@ public class Client {
     private String phoneNumber;
     private int age;
 
-    public Client(String fullName, String birthDate, String ssn, String email, String phoneNumber, String address) {
+    public ClientTest(String fullName, String birthDate, String ssn, String email, String phoneNumber, String address) {
         this.fullName = fullName;
         this.birthDate = birthDate;
-        this.age =ageCalculator(birthDate);
+        try {
+            this.age =ageCalculator(birthDate);
+        }catch (IllegalArgumentException e){
+            System.out.println("Error: " + e.getMessage());
+        }
         this.ssn = ssn;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
     }
-    private LocalDate validateAndParseDate(String birthDate) {
+    private int ageCalculator(String birthDate){
         try {
             DateTimeFormatter americanFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
             LocalDate dateOfBirth = LocalDate.parse(birthDate, americanFormat);
-
             if (dateOfBirth.isAfter(LocalDate.now())) {
-                throw new RuntimeException("Birth date in the future is not valid");
+                throw new RuntimeException("birth date in the future is not valid");
             }
-
-            return dateOfBirth;
-        } catch (DateTimeParseException e) {
+            Period period = Period.between(dateOfBirth, LocalDate.now());
+            return period.getYears();
+        }catch (DateTimeParseException e ){
             throw new RuntimeException("Invalid date format. Please use the format MM/dd/yyyy.");
         }
     }
-
-    private int ageCalculator(String birthDate) {
-        try {
-            LocalDate dateOfBirth = validateAndParseDate(birthDate);
-            Period period = Period.between(dateOfBirth, LocalDate.now());
-            return period.getYears();
-        }catch (IllegalArgumentException e){
-            System.out.println("Error: " + e.getMessage());
-        }
-        return 0;
-    }
-
     public String getSsn(){
         return this.ssn;
     }

@@ -1,10 +1,11 @@
 package Clients;
+
+import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
-import java.time.*;
 
-public class Client {
+public class ClientBuilderTest {
     private String ssn;
     private String fullName;
     private String email;
@@ -13,41 +14,36 @@ public class Client {
     private String phoneNumber;
     private int age;
 
-    public Client(String fullName, String birthDate, String ssn, String email, String phoneNumber, String address) {
+    public ClientBuilderTest personalInformation(String fullName, String birthDate, String ssn) {
         this.fullName = fullName;
         this.birthDate = birthDate;
-        this.age =ageCalculator(birthDate);
-        this.ssn = ssn;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-    }
-    private LocalDate validateAndParseDate(String birthDate) {
         try {
-            DateTimeFormatter americanFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            LocalDate dateOfBirth = LocalDate.parse(birthDate, americanFormat);
-
-            if (dateOfBirth.isAfter(LocalDate.now())) {
-                throw new RuntimeException("Birth date in the future is not valid");
-            }
-
-            return dateOfBirth;
-        } catch (DateTimeParseException e) {
-            throw new RuntimeException("Invalid date format. Please use the format MM/dd/yyyy.");
-        }
-    }
-
-    private int ageCalculator(String birthDate) {
-        try {
-            LocalDate dateOfBirth = validateAndParseDate(birthDate);
-            Period period = Period.between(dateOfBirth, LocalDate.now());
-            return period.getYears();
+            this.age =ageCalculator(birthDate);
         }catch (IllegalArgumentException e){
             System.out.println("Error: " + e.getMessage());
         }
-        return 0;
+        this.ssn = ssn;
+        return this;
     }
-
+    public ClientBuilderTest onlyAdresses(String email, String phoneNumber, String address){
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        return this;
+    }
+    private int ageCalculator(String birthDate){
+        try {
+            DateTimeFormatter americanFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            LocalDate dateOfBirth = LocalDate.parse(birthDate, americanFormat);
+            if (dateOfBirth.isAfter(LocalDate.now())) {
+                throw new RuntimeException("birth date in the future is not valid");
+            }
+            Period period = Period.between(dateOfBirth, LocalDate.now());
+            return period.getYears();
+        }catch (DateTimeParseException e ){
+            throw new RuntimeException("Invalid date format. Please use the format MM/dd/yyyy.");
+        }
+    }
     public String getSsn(){
         return this.ssn;
     }
@@ -99,4 +95,13 @@ public class Client {
         return "Client's data:\nName: "+getFullName()+"\nBirth date: "+getBirthDate()+"\nAge: "+getAge()+"\nSSN: "
                 +getSsn()+"\nEmail address: "+getEmail()+"\nPhone number: "+getPhoneNumber()+"\nZip address: "+getAddress();
     }
+    public String toStringPersonalinformation(){
+        return "Client's data:\nName: "+getFullName()+"\nBirth date: "+getBirthDate()+"\nAge: "+getAge()+"\nSSN: "
+                +getSsn();
+    }
+    public String toStringAdresses(){
+        return "Email address: "+getEmail()+"\nPhone number: "+getPhoneNumber()+"\nZip address: "+getAddress();
+    }
 }
+
+
