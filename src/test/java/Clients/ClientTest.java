@@ -1,5 +1,6 @@
 package Clients;
 
+import Domain.Client;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,8 +12,8 @@ public class ClientTest {
 
     @Before
     public void setUp() throws Exception {
-        client = new Client("Gustavo Baptista da Silva","01/30/2024","009781234947",
-                "gu.bap22@gmail.com","479912325195","rua joao");
+        client = new Client( "Gustavo Baptista da Silva", "01/30/2024", "009781234947",
+                "gu.bap22@gmail.com", "479912325195", "rua joao");
     }
 
     @Test
@@ -94,7 +95,7 @@ public class ClientTest {
 
     @Test
     public void testToString() {
-        String expectedString = "Client's data:\nName: Gustavo Baptista da Silva\nBirth date: 01/30/2024\nAge: 0\n" +
+        String expectedString = "Client's data:\nID: 1:\nName: Gustavo Baptista da Silva\nBirth date: 01/30/2024\nAge: 0\n" +
                 "SSN: 009781234947\nEmail address: gu.bap22@gmail.com\nPhone number: 479912325195\nZip address: rua joao";
         Assertions.assertEquals(client.toString(), expectedString);
     }
