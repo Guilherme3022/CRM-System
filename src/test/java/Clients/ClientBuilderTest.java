@@ -1,12 +1,11 @@
 package Clients;
 
+import Domain.ClientBuilder;
 import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-
-import static org.junit.Assert.*;
 
 public class ClientBuilderTest extends TestCase {
     private ClientBuilder clientBuilder;

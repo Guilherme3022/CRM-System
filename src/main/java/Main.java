@@ -1,30 +1,22 @@
-import Clients.Client;
-import Clients.ClientBuilder;
+import Domain.Client;
+import Domain.ClientBuilder;
+import repository.*;
+
+import java.sql.SQLException;
 
 public class Main {
-    public static void main(String[] args) {
-        Client clientG = new Client("Guilherme Baptista da Silva","11/12/2001","00978074947",
-                "gui.bap22@gmail.com", "47997225195","rua joao");
-        System.out.println(clientG);
-        System.out.println("\n"+"____________________________________________________________________________________________");
-
-        Client clientGu = new Client("Gustavo Baptista da Silva","10/26/2010","009781234947",
-                "gu.bap22@gmail.com", "479912325195","rua joao");
-        System.out.println("\n"+clientGu);
-        System.out.println("\n"+"____________________________________________________________________________________________");
-
-        ClientBuilder clientComplete= new ClientBuilder().personalInformation("Gustavo Baptista da Silva",
-                "01/30/2024","009781234947").onlyAdresses("gu.bap22@gmail.com", "479912325195",
-                "rua joao");
-        System.out.println("\n"+clientComplete);
-        System.out.println("\n"+"____________________________________________________________________________________________");
-
-        ClientBuilder clientaddress= new ClientBuilder().onlyAdresses("gu.bap22@gmail.com", "479912325195",
-                "rua joao");
-        System.out.println("\n"+clientaddress.toStringAdresses());
-        System.out.println("\n"+"____________________________________________________________________________________________");
-        ClientBuilder anyCostumer = new ClientBuilder();
-
-
+    public static void main(String[] args) throws SQLException {
+        ClientRepository clientRepository = new ClientRepository();
+        //Client client = clientRepository.findById(17);
+        //if(client != null){
+        //    System.out.println(client);
+        //}else{
+        //    System.out.println("cliente não encontrado");
+        //}
+        //clientRepository.insert(new Client("Paul George","1990-05-02","12345678901","paul.george@example.com","555-1234","123 Main Street"));
+        clientRepository.update(new Client(21,"Paul George","1990-05-02","12345678901","paul.george@example.com",
+                "555-1234","Indiana"));
+        clientRepository.findAll().forEach(System.out::println);
     }
+
 }
