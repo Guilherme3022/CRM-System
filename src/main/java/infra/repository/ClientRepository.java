@@ -1,6 +1,6 @@
-package repository;
+package infra.repository;
 
-import Domain.Client;
+import Domain.entities.Client;
 import java.util.*;
 import java.sql.*;
 
@@ -45,6 +45,40 @@ public class ClientRepository {
         }
         return client;
     }
+    public Client findBySsn(String ssn) throws SQLException{
+        Client client = null;
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM client WHERE ssn = ?");
+        preparedStatement.setString(1,ssn);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if(resultSet.next()){
+            client = new Client();
+            client.setId(resultSet.getInt("id"));
+            client.setSsn(resultSet.getString("ssn"));
+            client.setFullName(resultSet.getString("full_name"));
+            client.setEmail(resultSet.getString("email"));
+            client.setBirthDate(resultSet.getString("birth_date"));
+            client.setAddress(resultSet.getString("address"));
+            client.setPhoneNumber(resultSet.getString("phone_number"));
+        }
+        return client;
+    }
+    public Client findByEmail(String email) throws SQLException{
+        Client client = null;
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM client WHERE email = ?");
+        preparedStatement.setString(1,email);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if(resultSet.next()){
+            client = new Client();
+            client.setId(resultSet.getInt("id"));
+            client.setSsn(resultSet.getString("ssn"));
+            client.setFullName(resultSet.getString("full_name"));
+            client.setEmail(resultSet.getString("email"));
+            client.setBirthDate(resultSet.getString("birth_date"));
+            client.setAddress(resultSet.getString("address"));
+            client.setPhoneNumber(resultSet.getString("phone_number"));
+        }
+        return client;
+    }
     public boolean insert(Client client) throws SQLException {
         boolean inserted;
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("INSERT INTO client " +
@@ -75,5 +109,13 @@ public class ClientRepository {
         preparedStatement.setInt(7,client.getId());
         updated = preparedStatement.execute();
         return updated;
+    }
+    public boolean delete(int id) throws SQLException {
+        boolean isDeleted = false;
+
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("DELETE FROM client WHERE id = ? ");
+        preparedStatement.setInt(1, id);
+        isDeleted = preparedStatement.execute();
+        return isDeleted;
     }
 }
