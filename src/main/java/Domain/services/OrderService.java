@@ -1,6 +1,8 @@
 package Domain.services;
 
-import Domain.entities.Order;
+import Domain.entities.*;
+import infra.repository.ClientRepository;
+import infra.repository.DeliveryRepository;
 import infra.repository.OrderRepository;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,9 +33,41 @@ public class OrderService {
         return orderRepository.insert(order);
     }
 
-    public boolean updateOrder(Order order) throws SQLException {
+    public boolean updateOrderToStatusAwaitingPayment(Order order) throws SQLException {
+        order.setOrder_status("AWAITING_PAYMENT");
         return orderRepository.update(order);
     }
+
+    public boolean updateOrderToStatusPaid(Order order) throws SQLException {
+        order.setOrder_status("PAID");
+        return orderRepository.update(order);
+    }
+    public boolean updateOrderPreparingDelivery(Order order) throws SQLException {
+        order.setOrder_status("PREPARING_DELIVERY");
+        updateDeliveryPreparing(order);
+        return orderRepository.update(order);
+    }
+    public boolean updateDeliveryPreparing(Order order) throws SQLException {
+        if (order != null && order.getOrder_status().equals("PREPARING_DELIVERY")) {
+            if (orderRepository.update(order)) {
+                ClientRepository clientRepository = new ClientRepository();
+                Client client = clientRepository.findById(order.getClient_id());
+
+                if (client != null) {
+                    String deliveryAddress = client.getAddress();
+                    Delivery newDelivery = new Delivery();
+                    newDelivery.setOrder_id(order.getId());
+                    newDelivery.setDelivery_status("PENDING");
+                    newDelivery.setDelivery_date(currentDateAsString());
+                    newDelivery.setDelivery_address(deliveryAddress);
+                    DeliveryRepository deliveryRepository = new DeliveryRepository();
+                    return deliveryRepository.insert(newDelivery);
+                }
+            }
+        }
+        return false;
+    }
+
 
     public boolean deleteOrder(int id) throws SQLException {
         return orderRepository.delete(id);

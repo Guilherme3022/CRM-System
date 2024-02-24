@@ -7,6 +7,8 @@ import java.time.format.DateTimeParseException;
 
 public class Client {
     private int id;
+    private int live;
+
     private String ssn;
     private String fullName;
     private String email;
@@ -126,6 +128,14 @@ public class Client {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public int getLive() {
+        return live;
+    }
+
+    public void setLive(int live) {
+        this.live = live;
     }
 
     @Override

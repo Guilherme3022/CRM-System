@@ -17,7 +17,6 @@ public class Delivery {
         this.delivery_date = delivery_date;
         this.delivery_address = delivery_address;
         this.delivery_status = delivery_status;
-        this.delivery_notes = delivery_notes;
         this.delivery_received_date = delivery_received_date;
         this.received_by = received_by;
     }
@@ -60,15 +59,6 @@ public class Delivery {
     public void setDelivery_status(String delivery_status) {
         this.delivery_status = delivery_status;
     }
-
-    public String getDelivery_notes() {
-        return delivery_notes;
-    }
-
-    public void setDelivery_notes(String delivery_notes) {
-        this.delivery_notes = delivery_notes;
-    }
-
     public String getDelivery_received_date() {
         return delivery_received_date;
     }
@@ -95,8 +85,8 @@ public class Delivery {
 
     @Override
     public String toString() {
-        return String.format("| %-4d | %-8d | %-14s | %-30s | %-15s | %-15s | %-20s | %-30s |",
+        return String.format("| %-4d | %-8d | %-14s | %-30s | %-15s | %-20s | %-30s |",
                         getId(), getOrder_id(), getDelivery_date(), getDelivery_address(),
-                        getDelivery_status(), getDelivery_notes(), getDelivery_received_date(), getReceived_by());
+                        getDelivery_status(), getDelivery_received_date(), getReceived_by());
     }
 }

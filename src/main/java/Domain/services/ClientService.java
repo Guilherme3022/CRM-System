@@ -21,6 +21,7 @@ public class ClientService {
     }
 
     public boolean registerClient(Client client) throws SQLException {
+        client.setLive(1);
         if (clientRepository.findBySsn(client.getSsn()) != null || clientRepository.findByEmail(client.getEmail()) != null) {
             throw new IllegalArgumentException("A client with the same SSN or email already exists.");
         }
@@ -31,7 +32,4 @@ public class ClientService {
         return clientRepository.update(client);
     }
 
-    public boolean deleteClient(int id) throws SQLException {
-        return clientRepository.delete(id);
-    }
 }

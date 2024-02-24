@@ -107,17 +107,65 @@ public class Main {
                     System.out.println("New Client inserted successfully.");
                     break;
                 case 4:
-                    System.out.print("Enter Client ID to Update: ");
+                    System.out.print("Enter client ID to update: ");
                     int updateClientId = scanner.nextInt();
                     scanner.nextLine();
 
-                    Client clientToUpdate = clientRepository.findById(updateClientId);
+                    ClientService clientService = null;
+                    Client clientToUpdate = clientService.getClientById(updateClientId);
                     if (clientToUpdate != null) {
-                        System.out.print("Enter New Phone Number: ");
-                        String newPhoneNumber = scanner.nextLine();
-                        clientToUpdate.setPhoneNumber(newPhoneNumber);
-                        clientRepository.update(clientToUpdate);
-                        System.out.println("Client with ID " + updateClientId + " updated successfully.");
+                        System.out.println("Select fields to update:");
+                        System.out.println("1. Name");
+                        System.out.println("2. Birth Date");
+                        System.out.println("3. SSN");
+                        System.out.println("4. Email");
+                        System.out.println("5. Phone Number");
+                        System.out.println("6. Address");
+                        System.out.print("Enter your choice (comma-separated): ");
+                        String[] choices = scanner.nextLine().split(",");
+                        for (String choice1 : choices) {
+                            switch (choice1.trim()) {
+                                case "1":
+                                    System.out.print("Enter new name: ");
+                                    String newName = scanner.nextLine();
+                                    clientToUpdate.setFullName(newName);
+                                    break;
+                                case "2":
+                                    System.out.print("Enter new birth date (YYYY-MM-DD): ");
+                                    String newBirthDate = scanner.nextLine();
+                                    clientToUpdate.setBirthDate(newBirthDate);
+                                    break;
+                                case "3":
+                                    System.out.print("Enter new SSN: ");
+                                    String newSSN = scanner.nextLine();
+                                    clientToUpdate.setSsn(newSSN);
+                                    break;
+                                case "4":
+                                    System.out.print("Enter new email: ");
+                                    String newEmail = scanner.nextLine();
+                                    clientToUpdate.setEmail(newEmail);
+                                    break;
+                                case "5":
+                                    System.out.print("Enter new phone number: ");
+                                    String newPhoneNumber = scanner.nextLine();
+                                    clientToUpdate.setPhoneNumber(newPhoneNumber);
+                                    break;
+                                case "6":
+                                    System.out.print("Enter new address: ");
+                                    String newAddress = scanner.nextLine();
+                                    clientToUpdate.setAddress(newAddress);
+                                    break;
+                                default:
+                                    System.out.println("Invalid choice.");
+                                    break;
+                            }
+                        }
+                        boolean updated = clientService.updateClient(clientToUpdate);
+                        if (updated) {
+                            System.out.println("Client with ID " + updateClientId + " updated successfully.");
+                        } else {
+                            System.out.println("Failed to update client with ID " + updateClientId + ".");
+                        }
                     } else {
                         System.out.println("Client with ID " + updateClientId + " not found.");
                     }
@@ -126,8 +174,7 @@ public class Main {
                     System.out.print("Enter Client ID to Delete: ");
                     int deleteClientId = scanner.nextInt();
                     scanner.nextLine();
-
-                    if (clientRepository.delete(deleteClientId)) {
+                    if (clientRepository.deleteClient(deleteClientId)) {
                         System.out.println("Client with ID " + deleteClientId + " deleted successfully.");
                     } else {
                         System.out.println("Client with ID " + deleteClientId + " not found.");
@@ -152,9 +199,9 @@ public class Main {
         while (continueDeliveryServices) {
             System.out.println("\n------------ Delivery Services ------------");
             System.out.println("1. Find All Deliveries");
-            System.out.println("2. Find Delivery by ID");
-            System.out.println("3. Insert Delivery");
-            System.out.println("4. Update Delivery");
+            System.out.println("2. Find by id");
+            System.out.println("3. Update Delivery to In Transit");
+            System.out.println("4. Update Delivery to Delivered");
             System.out.println("5. Delete Delivery");
             System.out.println("6. Return to Main Menu");
             System.out.print("Enter your choice: ");
@@ -181,41 +228,28 @@ public class Main {
                     }
                     break;
                 case 3:
-                    System.out.println("Enter order ID: ");
-                    int orderId = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.println("Enter delivery date (YYYY-MM-DD): ");
-                    String deliveryDate = scanner.nextLine();
-                    System.out.println("Enter delivery address: ");
-                    String deliveryAddress = scanner.nextLine();
-                    System.out.println("Enter delivery status: ");
-                    String deliveryStatus = scanner.nextLine();
-                    System.out.println("Enter delivery notes: ");
-                    String deliveryNotes = scanner.nextLine();
-                    System.out.println("Enter received date (YYYY-MM-DD) or leave empty: ");
-                    String receivedDate = scanner.nextLine();
-                    System.out.println("Enter received by or leave empty: ");
-                    String receivedBy = scanner.nextLine();
-                    Delivery newDelivery = new Delivery(orderId, deliveryStatus, deliveryDate, receivedBy);
-                    if (receivedDate.isEmpty()) {
-                        newDelivery.setDelivery_received_date(null);
-                    } else {
-                        newDelivery.setDelivery_received_date(receivedDate);
-                    }
-                    boolean inserted = deliveryService.registerDelivery(newDelivery);
-                    if (inserted) {
-                        System.out.println("Delivery inserted successfully.");
-                    } else {
-                        System.out.println("Failed to insert delivery.");
-                    }
-                    break;
-                case 4:
                     System.out.print("Enter delivery ID to update: ");
                     int deliveryIdToUpdate = scanner.nextInt();
                     scanner.nextLine();
                     Delivery deliveryToUpdate = deliveryRepository.findById(deliveryIdToUpdate);
                     if (deliveryToUpdate != null) {
-                        boolean updated = deliveryService.updateDelivery(deliveryToUpdate);
+                        boolean updated = deliveryService.updateDeliveryInTransit(deliveryToUpdate);
+                        if (updated) {
+                            System.out.println("Delivery updated successfully.");
+                        } else {
+                            System.out.println("Failed to update delivery.");
+                        }
+                    } else {
+                        System.out.println("Delivery not found.");
+                    }
+                    break;
+                case 4:
+                    System.out.print("Enter delivery ID to update: ");
+                    deliveryIdToUpdate = scanner.nextInt();
+                    scanner.nextLine();
+                    deliveryToUpdate = deliveryRepository.findById(deliveryIdToUpdate);
+                    if (deliveryToUpdate != null) {
+                        boolean updated = deliveryService.updateDeliveryFinal(deliveryToUpdate);
                         if (updated) {
                             System.out.println("Delivery updated successfully.");
                         } else {
@@ -259,9 +293,11 @@ public class Main {
             System.out.println("1. Find All Orders");
             System.out.println("2. Find Order by ID");
             System.out.println("3. Create Order");
-            System.out.println("4. Update Order");
-            System.out.println("5. Delete Order");
-            System.out.println("6. Return to Main Menu");
+            System.out.println("4. Update Order: Waiting payment");
+            System.out.println("5. Update Order: Paid");
+            System.out.println("6. Update Order: Preparing for delivery");
+            System.out.println("7. Delete Order");
+            System.out.println("8. Return to Main Menu");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -304,7 +340,7 @@ public class Main {
                     scanner.nextLine();
                     Order orderToUpdate = orderService.getOrderById(orderIdToUpdate);
                     if (orderToUpdate != null) {
-                        boolean updated = orderService.updateOrder(orderToUpdate);
+                        boolean updated = orderService.updateOrderToStatusAwaitingPayment(orderToUpdate);
                         if (updated) {
                             System.out.println("Order updated successfully.");
                         } else {
@@ -315,6 +351,38 @@ public class Main {
                     }
                     break;
                 case 5:
+                    System.out.print("Enter order ID to update: ");
+                    orderIdToUpdate = scanner.nextInt();
+                    scanner.nextLine();
+                    orderToUpdate = orderService.getOrderById(orderIdToUpdate);
+                    if (orderToUpdate != null) {
+                        boolean updated = orderService.updateOrderToStatusPaid(orderToUpdate);
+                        if (updated) {
+                            System.out.println("Order updated successfully.");
+                        } else {
+                            System.out.println("Failed to update order.");
+                        }
+                    } else {
+                        System.out.println("Order not found.");
+                    }
+                    break;
+                case 6:
+                    System.out.print("Enter order ID to update: ");
+                    orderIdToUpdate = scanner.nextInt();
+                    scanner.nextLine();
+                    orderToUpdate = orderService.getOrderById(orderIdToUpdate);
+                    if (orderToUpdate != null) {
+                        boolean updated = orderService.updateOrderPreparingDelivery(orderToUpdate);
+                        if (updated) {
+                            System.out.println("Order updated successfully.");
+                        } else {
+                            System.out.println("Failed to update order.");
+                        }
+                    } else {
+                        System.out.println("Order not found.");
+                    }
+                    break;
+                case 7:
                     System.out.print("Enter order ID to delete: ");
                     int orderIdToDelete = scanner.nextInt();
                     scanner.nextLine();
@@ -325,7 +393,7 @@ public class Main {
                         System.out.println("Failed to delete order.");
                     }
                     break;
-                case 6:
+                case 8:
                     continueOrderServices = false;
                     break;
                 default:
@@ -534,7 +602,7 @@ public class Main {
         System.out.println("-".repeat(167));
     }
     private static void printTableIndexDelivery() {
-        System.out.println("| ID   | Order ID | Delivery Date  | Delivery Address                | Delivery Status | Delivery Notes | Received Date       | Received By                          |");
+        System.out.println("| ID   | Order ID | Delivery Date  | Delivery Address                | Delivery Status  | Received Date       | Received By                          |");
         System.out.println("-".repeat(127));
     }
     private static void printTableIndexOrder() {
@@ -546,7 +614,7 @@ public class Main {
         System.out.println("-".repeat(43));
     }
     private static void printTableIndexProduct() {
-        System.out.println("| ID   | Name                  | Price      |");
+        System.out.println("| ID   | Name                  | Price $      |");
         System.out.println("-".repeat(40));
     }
 
