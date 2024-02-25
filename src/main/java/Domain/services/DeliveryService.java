@@ -29,12 +29,12 @@ public class DeliveryService {
         Order order = orderRepository.findById(delivery.getOrder_id());
         if (order != null) {
             if (delivery.getDelivery_status().equals("DELIVERED")) {
-                System.out.print("Enter who received the package");
-                Scanner scanner = null;
-                String received_by = scanner.next();
-                scanner.nextLine();
+                System.out.print("Enter who received the package: ");
+                Scanner scanner = new Scanner(System.in);
+                String received_by = scanner.nextLine();
                 delivery.setReceived_by(received_by);
                 delivery.setDelivery_received_date(currentDateAsString());
+                deliveryRepository.update(delivery);
                 order.setOrder_status("DELIVERED");
                 orderRepository.update(order);
             }
@@ -44,6 +44,7 @@ public class DeliveryService {
     }
     public boolean updateDeliveryInTransit(Delivery delivery) throws SQLException {
         delivery.setDelivery_status("IN_TRANSIT");
+        deliveryRepository.update(delivery);
         OrderRepository orderRepository = new OrderRepository();
         Order order = orderRepository.findById(delivery.getOrder_id());
         if (order != null) {

@@ -16,8 +16,9 @@ public class ClientRepository {
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM client");
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
-            Client client = new Client();
-            if (client.getLive() == 1) {
+            int live = resultSet.getInt("Live");
+            if (live == 1) {
+                Client client = new Client();
                 client.setId(resultSet.getInt("id"));
                 client.setSsn(resultSet.getString("ssn"));
                 client.setFullName(resultSet.getString("full_name"));
@@ -31,13 +32,15 @@ public class ClientRepository {
         return clients;
     }
 
+
     public List<Client> findAllInactive() throws SQLException {
         List<Client> clients = new ArrayList<>();
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM client");
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
             Client client = new Client();
-            if (client.getLive() == 0) {
+            int live = resultSet.getInt("Live");
+            if (live == 0) {
                 client.setId(resultSet.getInt("id"));
                 client.setSsn(resultSet.getString("ssn"));
                 client.setFullName(resultSet.getString("full_name"));
@@ -57,8 +60,9 @@ public class ClientRepository {
         preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
-            if (client.getLive() == 1) {
-                client = new Client();
+            client = new Client();
+            int live = resultSet.getInt("Live");
+            if (live == 1) {
                 client.setId(resultSet.getInt("id"));
                 client.setSsn(resultSet.getString("ssn"));
                 client.setFullName(resultSet.getString("full_name"));
@@ -79,8 +83,9 @@ public class ClientRepository {
         preparedStatement.setString(1, ssn);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
-            if (client.getLive() == 1) {
-                client = new Client();
+            client = new Client();
+            int live = resultSet.getInt("Live");
+            if (live == 1) {
                 client.setId(resultSet.getInt("id"));
                 client.setSsn(resultSet.getString("ssn"));
                 client.setFullName(resultSet.getString("full_name"));
@@ -101,8 +106,9 @@ public class ClientRepository {
         preparedStatement.setString(1, email);
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
-            if (client.getLive() == 1) {
-                client = new Client();
+            client = new Client();
+            int live = resultSet.getInt("Live");
+            if (live == 1) {
                 client.setId(resultSet.getInt("id"));
                 client.setSsn(resultSet.getString("ssn"));
                 client.setFullName(resultSet.getString("full_name"));
@@ -150,14 +156,25 @@ public class ClientRepository {
         return updated;
     }
 
-    public boolean deleteLogical(Client client) throws SQLException {
-        if (client == null || client.getId() <= 0) {
+    public boolean deleteLogical(int id) throws SQLException {
+        if (id <= 0) {
+            return false;
+        }
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement(
+                "UPDATE client SET Live = ? WHERE id = ?");
+        preparedStatement.setInt(1, 0);
+        preparedStatement.setInt(2, id);
+        int rowsAffected = preparedStatement.executeUpdate();
+        return rowsAffected > 0;
+    }
+    public boolean turnActive(int id) throws SQLException {
+        if (id <= 0) {
             return false;
         }
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement(
                 "UPDATE client SET Live = ? WHERE id = ?");
         preparedStatement.setInt(1, 1);
-        preparedStatement.setInt(2, client.getId());
+        preparedStatement.setInt(2, id);
         int rowsAffected = preparedStatement.executeUpdate();
         return rowsAffected > 0;
     }

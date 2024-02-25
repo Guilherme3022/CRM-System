@@ -60,11 +60,13 @@ public class Main {
         while (continueClientServices) {
             System.out.println("\n------------ Client Services ------------");
             System.out.println("1. Find All Clients");
-            System.out.println("2. Find Client by ID");
-            System.out.println("3. Insert Client");
-            System.out.println("4. Update Client");
-            System.out.println("5. Delete Client");
-            System.out.println("6. Return to Main Menu");
+            System.out.println("2. Find All inactive Clients");
+            System.out.println("3. Find Client by ID");
+            System.out.println("4. Insert Client");
+            System.out.println("5. Update Client");
+            System.out.println("6. Delete Client");
+            System.out.println("7. Active Client");
+            System.out.println("8. Return to Main Menu");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -78,6 +80,13 @@ public class Main {
                     }
                     break;
                 case 2:
+                    List<Client> clients2 = clientRepository.findAllInactive();
+                    printTableIndexClient();
+                    for (Client client : clients2) {
+                        System.out.println(client);
+                    }
+                    break;
+                case 3:
                     System.out.print("Enter Client ID: ");
                     int clientId = scanner.nextInt();
                     Client foundClient = clientRepository.findById(clientId);
@@ -88,7 +97,7 @@ public class Main {
                         System.out.println("Client with ID " + clientId + " not found.");
                     }
                     break;
-                case 3:
+                case 4:
                     System.out.print("Enter Client Name: ");
                     String name = scanner.nextLine();
                     System.out.print("Enter Client Birth Date (YYYY-MM-DD): ");
@@ -106,7 +115,7 @@ public class Main {
                     clientRepository.insert(newClient);
                     System.out.println("New Client inserted successfully.");
                     break;
-                case 4:
+                case 5:
                     System.out.print("Enter client ID to update: ");
                     int updateClientId = scanner.nextInt();
                     scanner.nextLine();
@@ -170,17 +179,27 @@ public class Main {
                         System.out.println("Client with ID " + updateClientId + " not found.");
                     }
                     break;
-                case 5:
+                case 6:
                     System.out.print("Enter Client ID to Delete: ");
                     int deleteClientId = scanner.nextInt();
                     scanner.nextLine();
-                    if (clientRepository.deleteClient(deleteClientId)) {
+                    if (clientRepository.deleteLogical(deleteClientId)) {
                         System.out.println("Client with ID " + deleteClientId + " deleted successfully.");
                     } else {
                         System.out.println("Client with ID " + deleteClientId + " not found.");
                     }
                     break;
-                case 6:
+                case 7:
+                    System.out.print("Enter Client ID to active: ");
+                    int activeClientId = scanner.nextInt();
+                    scanner.nextLine();
+                    if (clientRepository.turnActive(activeClientId)) {
+                        System.out.println("Client with ID " + activeClientId + " active successfully.");
+                    } else {
+                        System.out.println("Client with ID " + activeClientId + " not found.");
+                    }
+                    break;
+                case 8:
                     continueClientServices = false;
                     break;
                 default:
