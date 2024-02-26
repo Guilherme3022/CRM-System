@@ -19,12 +19,32 @@ public class OrderProductRepository {
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM order_product");
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
-            OrderProduct orderProduct = new OrderProduct();
-            orderProduct.setId(resultSet.getInt("id"));
-            orderProduct.setOrder_id(resultSet.getInt("order_id"));
-            orderProduct.setProduct_id(resultSet.getInt("product_id"));
-            orderProduct.setQuantity(resultSet.getInt("quantity"));
-            orderProducts.add(orderProduct);
+            int live = resultSet.getInt("Live");
+            if (live == 1) {
+                OrderProduct orderProduct = new OrderProduct();
+                orderProduct.setId(resultSet.getInt("id"));
+                orderProduct.setOrder_id(resultSet.getInt("order_id"));
+                orderProduct.setProduct_id(resultSet.getInt("product_id"));
+                orderProduct.setQuantity(resultSet.getInt("quantity"));
+                orderProducts.add(orderProduct);
+            }
+        }
+        return orderProducts;
+    }
+    public List<OrderProduct> findAllInactive() throws SQLException {
+        List<OrderProduct> orderProducts = new ArrayList<>();
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM order_product");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            int live = resultSet.getInt("Live");
+            if (live == 0) {
+                OrderProduct orderProduct = new OrderProduct();
+                orderProduct.setId(resultSet.getInt("id"));
+                orderProduct.setOrder_id(resultSet.getInt("order_id"));
+                orderProduct.setProduct_id(resultSet.getInt("product_id"));
+                orderProduct.setQuantity(resultSet.getInt("quantity"));
+                orderProducts.add(orderProduct);
+            }
         }
         return orderProducts;
     }
@@ -34,12 +54,15 @@ public class OrderProductRepository {
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM order_product WHERE id = ?");
         preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
-        if(resultSet.next()){
-            orderProduct = new OrderProduct();
-            orderProduct.setId(resultSet.getInt("id"));
-            orderProduct.setOrder_id(resultSet.getInt("order_id"));
-            orderProduct.setProduct_id(resultSet.getInt("product_id"));
-            orderProduct.setQuantity(resultSet.getInt("quantity"));
+        if(resultSet.next()) {
+            int live = resultSet.getInt("Live");
+            if (live == 1) {
+                orderProduct = new OrderProduct();
+                orderProduct.setId(resultSet.getInt("id"));
+                orderProduct.setOrder_id(resultSet.getInt("order_id"));
+                orderProduct.setProduct_id(resultSet.getInt("product_id"));
+                orderProduct.setQuantity(resultSet.getInt("quantity"));
+            }
         }
         return orderProduct;
     }
@@ -66,12 +89,15 @@ public class OrderProductRepository {
         updated = preparedStatement.execute();
         return updated;
     }
-
     public boolean delete(int id) throws SQLException {
-        boolean isDeleted;
-        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("DELETE FROM order_product WHERE id = ?");
-        preparedStatement.setInt(1, id);
-        isDeleted = preparedStatement.execute();
-        return isDeleted;
+        if (id <= 0) {
+            return false;
+        }
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement(
+                "UPDATE order_product SET Live = ? WHERE id = ?");
+        preparedStatement.setInt(1, 0);
+        preparedStatement.setInt(2, id);
+        int rowsAffected = preparedStatement.executeUpdate();
+        return rowsAffected > 0;
     }
 }

@@ -19,6 +19,9 @@ public class DeliveryService {
     public List<Delivery> getAllDeliverie() throws SQLException {
         return deliveryRepository.findAll();
     }
+    public List<Delivery> getAllDeliveriefinal() throws SQLException {
+        return deliveryRepository.findAllFinal();
+    }
 
     public Delivery getDeliveryById(int id) throws SQLException {
         return deliveryRepository.findById(id);
@@ -58,8 +61,8 @@ public class DeliveryService {
     }
 
 
-    public boolean deleteDelivery(int id) throws SQLException {
-        return deliveryRepository.delete(id);
+    public boolean deleteDelivery() throws SQLException {
+        return deliveryRepository.delete();
     }
     private String currentDateAsString() {
         LocalDate currentDate = LocalDate.now();

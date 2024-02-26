@@ -6,6 +6,9 @@ public class Order {
     private String created_at;
     private double order_value;
     private String order_status;
+    private int live;
+
+
 
     public Order(Client client, String created_at, double order_value, String order_status) {
         this.client_id = client.getId();
@@ -53,6 +56,13 @@ public class Order {
 
     public void setClient_id(int client_id) {
         this.client_id = client_id;
+    }
+    public int getLive() {
+        return live;
+    }
+
+    public void setLive(int live) {
+        this.live = live;
     }
 
     @Override

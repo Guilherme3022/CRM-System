@@ -4,6 +4,7 @@ public class Product {
     private int id;
     private String name;
     private double price;
+    private int live;
 
     public Product(String name, double price) {
         this.name = name;
@@ -35,6 +36,14 @@ public class Product {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public int getLive() {
+        return live;
+    }
+
+    public void setLive(int live) {
+        this.live = live;
     }
 
     @Override

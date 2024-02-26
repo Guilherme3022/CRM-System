@@ -54,6 +54,7 @@ public class Main {
 
     private static void clientServices() throws SQLException {
         ClientRepository clientRepository = new ClientRepository();
+        ClientService clientService = new ClientService(clientRepository);
         Scanner scanner = new Scanner(System.in);
         boolean continueClientServices = true;
 
@@ -73,14 +74,14 @@ public class Main {
 
             switch (choice) {
                 case 1:
-                    List<Client> clients = clientRepository.findAll();
+                    List<Client> clients = clientService.getAllClients();
                     printTableIndexClient();
                     for (Client client : clients) {
                         System.out.println(client);
                     }
                     break;
                 case 2:
-                    List<Client> clients2 = clientRepository.findAllInactive();
+                    List<Client> clients2 = clientService.getAllClientsInactive();
                     printTableIndexClient();
                     for (Client client : clients2) {
                         System.out.println(client);
@@ -89,7 +90,7 @@ public class Main {
                 case 3:
                     System.out.print("Enter Client ID: ");
                     int clientId = scanner.nextInt();
-                    Client foundClient = clientRepository.findById(clientId);
+                    Client foundClient = clientService.getClientById(clientId);
                     if (foundClient != null) {
                         printTableIndexClient();
                         System.out.println(foundClient);
@@ -112,15 +113,13 @@ public class Main {
                     String address = scanner.nextLine();
 
                     Client newClient = new Client(name, birthDate, ssn, email, phoneNumber, address);
-                    clientRepository.insert(newClient);
+                    clientService.registerClient(newClient);
                     System.out.println("New Client inserted successfully.");
                     break;
                 case 5:
                     System.out.print("Enter client ID to update: ");
                     int updateClientId = scanner.nextInt();
                     scanner.nextLine();
-
-                    ClientService clientService = null;
                     Client clientToUpdate = clientService.getClientById(updateClientId);
                     if (clientToUpdate != null) {
                         System.out.println("Select fields to update:");
@@ -183,7 +182,7 @@ public class Main {
                     System.out.print("Enter Client ID to Delete: ");
                     int deleteClientId = scanner.nextInt();
                     scanner.nextLine();
-                    if (clientRepository.deleteLogical(deleteClientId)) {
+                    if (clientService.delete(deleteClientId)) {
                         System.out.println("Client with ID " + deleteClientId + " deleted successfully.");
                     } else {
                         System.out.println("Client with ID " + deleteClientId + " not found.");
@@ -193,7 +192,7 @@ public class Main {
                     System.out.print("Enter Client ID to active: ");
                     int activeClientId = scanner.nextInt();
                     scanner.nextLine();
-                    if (clientRepository.turnActive(activeClientId)) {
+                    if (clientService.active(activeClientId)) {
                         System.out.println("Client with ID " + activeClientId + " active successfully.");
                     } else {
                         System.out.println("Client with ID " + activeClientId + " not found.");
@@ -218,39 +217,47 @@ public class Main {
         while (continueDeliveryServices) {
             System.out.println("\n------------ Delivery Services ------------");
             System.out.println("1. Find All Deliveries");
-            System.out.println("2. Find by id");
-            System.out.println("3. Update Delivery to In Transit");
-            System.out.println("4. Update Delivery to Delivered");
-            System.out.println("5. Delete Delivery");
+            System.out.println("2. Find All Deliveries delivered");
+            System.out.println("3. Find by id");
+            System.out.println("4. Update Delivery to In Transit");
+            System.out.println("5. Update Delivery to Delivered");
             System.out.println("6. Return to Main Menu");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
+            deliveryService.deleteDelivery();
 
             switch (choice) {
                 case 1:
-                    List<Delivery> deliveries = deliveryRepository.findAll();
+                    List<Delivery> deliveries = deliveryService.getAllDeliverie();
                     printTableIndexDelivery();
                     for (Delivery delivery : deliveries) {
                         System.out.println(delivery);
                     }
                     break;
                 case 2:
-                    System.out.print("Enter delivery ID: ");
-                    int deliveryId = scanner.nextInt();
-                    scanner.nextLine();
-                    Delivery delivery = deliveryRepository.findById(deliveryId);
-                    if (delivery != null) {
+                    List<Delivery> deliveries2 = deliveryService.getAllDeliveriefinal();
+                    printTableIndexDelivery();
+                    for (Delivery delivery : deliveries2) {
                         System.out.println(delivery);
-                    } else {
-                        System.out.println("Delivery not found.");
                     }
                     break;
                 case 3:
+                    System.out.print("Enter delivery ID: ");
+                    int deliveryId = scanner.nextInt();
+                    scanner.nextLine();
+                    Delivery delivery = deliveryService.getDeliveryById(deliveryId);
+                    if (delivery != null) {
+                        System.out.println(delivery);
+                    } else {
+                        System.out.println("Delivery finalized.");
+                    }
+                    break;
+                case 4:
                     System.out.print("Enter delivery ID to update: ");
                     int deliveryIdToUpdate = scanner.nextInt();
                     scanner.nextLine();
-                    Delivery deliveryToUpdate = deliveryRepository.findById(deliveryIdToUpdate);
+                    Delivery deliveryToUpdate = deliveryService.getDeliveryById(deliveryIdToUpdate);
                     if (deliveryToUpdate != null) {
                         boolean updated = deliveryService.updateDeliveryInTransit(deliveryToUpdate);
                         if (updated) {
@@ -262,11 +269,11 @@ public class Main {
                         System.out.println("Delivery not found.");
                     }
                     break;
-                case 4:
+                case 5:
                     System.out.print("Enter delivery ID to update: ");
                     deliveryIdToUpdate = scanner.nextInt();
                     scanner.nextLine();
-                    deliveryToUpdate = deliveryRepository.findById(deliveryIdToUpdate);
+                    deliveryToUpdate = deliveryService.getDeliveryById(deliveryIdToUpdate);
                     if (deliveryToUpdate != null) {
                         boolean updated = deliveryService.updateDeliveryFinal(deliveryToUpdate);
                         if (updated) {
@@ -276,17 +283,6 @@ public class Main {
                         }
                     } else {
                         System.out.println("Delivery not found.");
-                    }
-                    break;
-                case 5:
-                    System.out.print("Enter delivery ID to delete: ");
-                    int deliveryIdToDelete = scanner.nextInt();
-                    scanner.nextLine();
-                    boolean deleted = deliveryService.deleteDelivery(deliveryIdToDelete);
-                    if (deleted) {
-                        System.out.println("Delivery deleted successfully.");
-                    } else {
-                        System.out.println("Failed to delete delivery.");
                     }
                     break;
                 case 6:
@@ -310,16 +306,17 @@ public class Main {
         while (continueOrderServices) {
             System.out.println("\n------------ Order Services ------------");
             System.out.println("1. Find All Orders");
-            System.out.println("2. Find Order by ID");
-            System.out.println("3. Create Order");
-            System.out.println("4. Update Order: Waiting payment");
-            System.out.println("5. Update Order: Paid");
-            System.out.println("6. Update Order: Preparing for delivery");
-            System.out.println("7. Delete Order");
+            System.out.println("2. Find All Orders inactive");
+            System.out.println("3. Find Order by ID");
+            System.out.println("4. Create Order");
+            System.out.println("5. Update Order: Waiting payment");
+            System.out.println("6. Update Order: Paid");
+            System.out.println("7. Update Order: Preparing for delivery");
             System.out.println("8. Return to Main Menu");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
+            orderService.deleteOrder();
 
             switch (choice) {
                 case 1:
@@ -330,6 +327,13 @@ public class Main {
                     }
                     break;
                 case 2:
+                    List<Order> orders2 = orderService.getAllOrdersDelivered();
+                    printTableIndexOrder();
+                    for (Order order : orders2) {
+                        System.out.println(order);
+                    }
+                    break;
+                case 3:
                     System.out.print("Enter order ID: ");
                     int orderId = scanner.nextInt();
                     scanner.nextLine();
@@ -337,10 +341,10 @@ public class Main {
                     if (foundOrder != null) {
                         System.out.println(foundOrder);
                     } else {
-                        System.out.println("Order not found.");
+                        System.out.println("Order finalized.");
                     }
                     break;
-                case 3:
+                case 4:
                     System.out.println("Enter client ID: ");
                     int clientId = scanner.nextInt();
                     scanner.nextLine();
@@ -353,7 +357,7 @@ public class Main {
                         System.out.println("Failed to create order.");
                     }
                     break;
-                case 4:
+                case 5:
                     System.out.print("Enter order ID to update: ");
                     int orderIdToUpdate = scanner.nextInt();
                     scanner.nextLine();
@@ -369,7 +373,7 @@ public class Main {
                         System.out.println("Order not found.");
                     }
                     break;
-                case 5:
+                case 6:
                     System.out.print("Enter order ID to update: ");
                     orderIdToUpdate = scanner.nextInt();
                     scanner.nextLine();
@@ -385,7 +389,7 @@ public class Main {
                         System.out.println("Order not found.");
                     }
                     break;
-                case 6:
+                case 7:
                     System.out.print("Enter order ID to update: ");
                     orderIdToUpdate = scanner.nextInt();
                     scanner.nextLine();
@@ -399,17 +403,6 @@ public class Main {
                         }
                     } else {
                         System.out.println("Order not found.");
-                    }
-                    break;
-                case 7:
-                    System.out.print("Enter order ID to delete: ");
-                    int orderIdToDelete = scanner.nextInt();
-                    scanner.nextLine();
-                    boolean deleted = orderService.deleteOrder(orderIdToDelete);
-                    if (deleted) {
-                        System.out.println("Order deleted successfully.");
-                    } else {
-                        System.out.println("Failed to delete order.");
                     }
                     break;
                 case 8:
@@ -433,11 +426,12 @@ public class Main {
         while (continueOrderProductServices) {
             System.out.println("\n------------ Order Product Services ------------");
             System.out.println("1. Find All Order Products");
-            System.out.println("2. Find Order Product by ID");
-            System.out.println("3. Register Order Product");
-            System.out.println("4. Update Order Product");
-            System.out.println("5. Delete Order Product");
-            System.out.println("6. Return to Main Menu");
+            System.out.println("2. Find All Order Products inactive" );
+            System.out.println("3. Find Order Product by ID");
+            System.out.println("4. Register Order Product");
+            System.out.println("5. Update Order Product");
+            System.out.println("6. Delete Order Product");
+            System.out.println("7. Return to Main Menu");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -451,6 +445,13 @@ public class Main {
                     }
                     break;
                 case 2:
+                    List<OrderProduct> orderProducts2 = orderProductService.getAllOrderProductsInactive();
+                    printTableIndexOrderProduct();
+                    for (OrderProduct orderProduct : orderProducts2) {
+                        System.out.println(orderProduct);
+                    }
+                    break;
+                case 3:
                     System.out.print("Enter order product ID: ");
                     int orderProductId = scanner.nextInt();
                     scanner.nextLine();
@@ -461,7 +462,7 @@ public class Main {
                         System.out.println("Order product not found.");
                     }
                     break;
-                case 3:
+                case 4:
                     System.out.println("Enter order ID: ");
                     int orderId = scanner.nextInt();
                     scanner.nextLine();
@@ -490,7 +491,7 @@ public class Main {
                         System.out.println("Failed to register order product.");
                     }
                     break;
-                case 4:
+                case 5:
                     System.out.print("Enter order product ID to update: ");
                     int orderProductIdToUpdate = scanner.nextInt();
                     scanner.nextLine();
@@ -506,7 +507,7 @@ public class Main {
                         System.out.println("Order product not found.");
                     }
                     break;
-                case 5:
+                case 6:
                     System.out.print("Enter order product ID to delete: ");
                     int orderProductIdToDelete = scanner.nextInt();
                     scanner.nextLine();
@@ -517,7 +518,7 @@ public class Main {
                         System.out.println("Failed to delete order product.");
                     }
                     break;
-                case 6:
+                case 7:
                     continueOrderProductServices = false;
                     break;
                 default:
@@ -538,6 +539,7 @@ public class Main {
         while (continueProductServices) {
             System.out.println("\n------------ Product Services ------------");
             System.out.println("1. Find All Products");
+            System.out.println("1. Find All Products inactive");
             System.out.println("2. Find Product by ID");
             System.out.println("3. Register Product");
             System.out.println("4. Update Product");
@@ -556,6 +558,13 @@ public class Main {
                     }
                     break;
                 case 2:
+                    List<Product> products2 = productService.getAllProductsDeleted();
+                    printTableIndexProduct();
+                    for (Product product : products2) {
+                        System.out.println(product);
+                    }
+                    break;
+                case 3:
                     System.out.print("Enter product ID: ");
                     int productId = scanner.nextInt();
                     scanner.nextLine();
@@ -566,7 +575,7 @@ public class Main {
                         System.out.println("Product not found.");
                     }
                     break;
-                case 3:
+                case 4:
                     System.out.print("Enter product name: ");
                     String productName = scanner.nextLine();
                     System.out.print("Enter product price: ");
@@ -580,7 +589,7 @@ public class Main {
                         System.out.println("Failed to register product.");
                     }
                     break;
-                case 4:
+                case 5:
                     System.out.print("Enter product ID to update: ");
                     int productIdToUpdate = scanner.nextInt();
                     scanner.nextLine();
@@ -596,7 +605,7 @@ public class Main {
                         System.out.println("Product not found.");
                     }
                     break;
-                case 5:
+                case 6:
                     System.out.print("Enter product ID to delete: ");
                     int productIdToDelete = scanner.nextInt();
                     scanner.nextLine();
@@ -607,7 +616,7 @@ public class Main {
                         System.out.println("Failed to delete product.");
                     }
                     break;
-                case 6:
+                case 7:
                     continueProductServices = false;
                     break;
                 default:

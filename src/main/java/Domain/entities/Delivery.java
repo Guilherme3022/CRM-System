@@ -6,6 +6,7 @@ public class Delivery {
     private String delivery_date;
     private String delivery_address;
     private String delivery_status;
+    private int live;
     private String delivery_notes;
     private String delivery_received_date;
     private String received_by;
@@ -73,6 +74,14 @@ public class Delivery {
 
     public void setDelivery_received_date(String delivery_received_date) {
         this.delivery_received_date = delivery_received_date;
+    }
+
+    public int getLive() {
+        return live;
+    }
+
+    public void setLive(int live) {
+        this.live = live;
     }
 
     public String getReceived_by() {

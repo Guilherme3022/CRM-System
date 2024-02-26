@@ -19,13 +19,34 @@ public class OrderRepository {
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM `order`");
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
-            Order orders = new Order();
-            orders.setId(resultSet.getInt("id"));
-            orders.setClient_id(resultSet.getInt("client_id"));
-            orders.setCreated_at(resultSet.getString("created_at"));
-            orders.setOrder_value(resultSet.getDouble("order_value"));
-            orders.setOrder_status(resultSet.getString("order_status"));
-            order.add(orders);
+            int live = resultSet.getInt("Live");
+            if (live == 1) {
+                Order orders = new Order();
+                orders.setId(resultSet.getInt("id"));
+                orders.setClient_id(resultSet.getInt("client_id"));
+                orders.setCreated_at(resultSet.getString("created_at"));
+                orders.setOrder_value(resultSet.getDouble("order_value"));
+                orders.setOrder_status(resultSet.getString("order_status"));
+                order.add(orders);
+            }
+        }
+        return order;
+    }
+    public List<Order> findAllDelivered() throws SQLException {
+        List<Order> order = new ArrayList<>();
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM `order`");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            int live = resultSet.getInt("Live");
+            if (live == 0) {
+                Order orders = new Order();
+                orders.setId(resultSet.getInt("id"));
+                orders.setClient_id(resultSet.getInt("client_id"));
+                orders.setCreated_at(resultSet.getString("created_at"));
+                orders.setOrder_value(resultSet.getDouble("order_value"));
+                orders.setOrder_status(resultSet.getString("order_status"));
+                order.add(orders);
+            }
         }
         return order;
     }
@@ -35,13 +56,16 @@ public class OrderRepository {
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM `order` WHERE id = ?");
         preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
-        if(resultSet.next()){
-            order = new Order();
-            order.setId(resultSet.getInt("id"));
-            order.setClient_id(resultSet.getInt("client_id"));
-            order.setCreated_at(resultSet.getString("created_at"));
-            order.setOrder_value(resultSet.getDouble("order_value"));
-            order.setOrder_status(resultSet.getString("order_status"));
+        if(resultSet.next()) {
+            int live = resultSet.getInt("Live");
+            if (live == 1) {
+                order = new Order();
+                order.setId(resultSet.getInt("id"));
+                order.setClient_id(resultSet.getInt("client_id"));
+                order.setCreated_at(resultSet.getString("created_at"));
+                order.setOrder_value(resultSet.getDouble("order_value"));
+                order.setOrder_status(resultSet.getString("order_status"));
+            }
         }
         return order;
     }
@@ -71,14 +95,13 @@ public class OrderRepository {
         updated = preparedStatement.executeUpdate() > 0;
         return updated;
     }
-
-
-    public boolean delete(int id) throws SQLException {
-        boolean isDeleted;
-        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("DELETE FROM `order` WHERE id = ?");
-        preparedStatement.setInt(1, id);
-        isDeleted = preparedStatement.execute();
-        return isDeleted;
+    public boolean delete() throws SQLException {
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement(
+                "UPDATE `order` SET Live = ? WHERE order_status  = ?");
+        preparedStatement.setInt(1, 0);
+        preparedStatement.setString(2, "DELIVERED");
+        int rowsAffected = preparedStatement.executeUpdate();
+        return rowsAffected > 0;
     }
     public double calculateOrderValue(int orderId) throws SQLException {
         double totalOrderValue = 0.0;
@@ -102,4 +125,5 @@ public class OrderRepository {
 
         return totalOrderValue;
     }
+
 }

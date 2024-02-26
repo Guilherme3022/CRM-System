@@ -23,11 +23,15 @@ public class OrderService {
     public List<Order> getAllOrders() throws SQLException {
         return orderRepository.findAll();
     }
+    public List<Order> getAllOrdersDelivered() throws SQLException {
+        return orderRepository.findAllDelivered();
+    }
 
     public Order getOrderById(int id) throws SQLException {
         return orderRepository.findById(id);
     }
     public boolean createOrder(Order order) throws SQLException {
+        order.setLive(1);
         order.setCreated_at(currentDateAsString());
         order.setOrder_status("CREATED");
         return orderRepository.insert(order);
@@ -60,6 +64,7 @@ public class OrderService {
                     newDelivery.setDelivery_status("PENDING");
                     newDelivery.setDelivery_date(currentDateAsString());
                     newDelivery.setDelivery_address(deliveryAddress);
+                    newDelivery.setLive(1);
                     DeliveryRepository deliveryRepository = new DeliveryRepository();
                     return deliveryRepository.insert(newDelivery);
                 }
@@ -69,8 +74,8 @@ public class OrderService {
     }
 
 
-    public boolean deleteOrder(int id) throws SQLException {
-        return orderRepository.delete(id);
+    public boolean deleteOrder() throws SQLException {
+        return orderRepository.delete();
     }
     private String currentDateAsString() {
         LocalDate currentDate = LocalDate.now();

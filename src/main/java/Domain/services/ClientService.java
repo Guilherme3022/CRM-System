@@ -15,6 +15,9 @@ public class ClientService {
     public List<Client> getAllClients() throws SQLException {
         return clientRepository.findAll();
     }
+    public List<Client> getAllClientsInactive() throws SQLException {
+        return clientRepository.findAllInactive();
+    }
 
     public Client getClientById(int id) throws SQLException {
         return clientRepository.findById(id);
@@ -30,6 +33,12 @@ public class ClientService {
 
     public boolean updateClient(Client client) throws SQLException {
         return clientRepository.update(client);
+    }
+    public boolean delete(int id) throws SQLException {
+        return clientRepository.deleteLogical(id);
+    }
+    public boolean active(int id) throws SQLException {
+        return clientRepository.turnActive(id);
     }
 
 }

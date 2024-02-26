@@ -16,11 +16,30 @@ public class ProductRepository {
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM product");
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
-            Product product = new Product();
-            product.setId(resultSet.getInt("id"));
-            product.setName(resultSet.getString("name"));
-            product.setPrice(resultSet.getDouble("price"));
-            products.add(product);
+            int live = resultSet.getInt("Live");
+            if (live == 1) {
+                Product product = new Product();
+                product.setId(resultSet.getInt("id"));
+                product.setName(resultSet.getString("name"));
+                product.setPrice(resultSet.getDouble("price"));
+                products.add(product);
+            }
+        }
+        return products;
+    }
+    public List<Product> findAlldeleted() throws SQLException {
+        List<Product> products = new ArrayList<>();
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM product");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            int live = resultSet.getInt("Live");
+            if (live == 0) {
+                Product product = new Product();
+                product.setId(resultSet.getInt("id"));
+                product.setName(resultSet.getString("name"));
+                product.setPrice(resultSet.getDouble("price"));
+                products.add(product);
+            }
         }
         return products;
     }
@@ -30,10 +49,13 @@ public class ProductRepository {
         preparedStatement.setInt(1,id);
         ResultSet resultSet = preparedStatement.executeQuery();
         if(resultSet.next()){
-            product = new Product();
-            product.setId(resultSet.getInt("id"));
-            product.setName(resultSet.getString("name"));
-            product.setPrice(resultSet.getDouble("price"));
+            int live = resultSet.getInt("Live");
+            if (live == 1) {
+                product = new Product();
+                product.setId(resultSet.getInt("id"));
+                product.setName(resultSet.getString("name"));
+                product.setPrice(resultSet.getDouble("price"));
+            }
         }
         return product;
     }
@@ -79,6 +101,17 @@ public class ProductRepository {
         preparedStatement.setInt(1, id);
         isDeleted = preparedStatement.execute();
         return isDeleted;
+    }
+    public boolean deleteLogical(int id) throws SQLException {
+        if (id <= 0) {
+            return false;
+        }
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement(
+                "UPDATE product SET Live = ? WHERE id = ?");
+        preparedStatement.setInt(1, 0);
+        preparedStatement.setInt(2, id);
+        int rowsAffected = preparedStatement.executeUpdate();
+        return rowsAffected > 0;
     }
 
 

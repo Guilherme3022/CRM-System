@@ -19,33 +19,60 @@ public class DeliveryRepository {
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM delivery");
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
-            Delivery delivery = new Delivery();
-            delivery.setId(resultSet.getInt("delivery_id"));
-            delivery.setOrder_id(resultSet.getInt("order_id"));
-            delivery.setDelivery_date(resultSet.getString("delivery_date"));
-            delivery.setDelivery_address(resultSet.getString("delivery_address"));
-            delivery.setDelivery_status(resultSet.getString("delivery_status"));
-            delivery.setDelivery_received_date(resultSet.getString("delivery_received_date"));
-            delivery.setReceived_by(resultSet.getString("received_by"));
-            deliveries.add(delivery);
+            int live = resultSet.getInt("Live");
+            if (live == 1) {
+                Delivery delivery = new Delivery();
+                delivery.setId(resultSet.getInt("delivery_id"));
+                delivery.setOrder_id(resultSet.getInt("order_id"));
+                delivery.setDelivery_date(resultSet.getString("delivery_date"));
+                delivery.setDelivery_address(resultSet.getString("delivery_address"));
+                delivery.setDelivery_status(resultSet.getString("delivery_status"));
+                delivery.setDelivery_received_date(resultSet.getString("delivery_received_date"));
+                delivery.setReceived_by(resultSet.getString("received_by"));
+                deliveries.add(delivery);
+            }
         }
         return deliveries;
     }
+    public List<Delivery> findAllFinal() throws SQLException {
+        List<Delivery> deliveries = new ArrayList<>();
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM delivery");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            int live = resultSet.getInt("Live");
+            if (live == 0) {
+                Delivery delivery = new Delivery();
+                delivery.setId(resultSet.getInt("delivery_id"));
+                delivery.setOrder_id(resultSet.getInt("order_id"));
+                delivery.setDelivery_date(resultSet.getString("delivery_date"));
+                delivery.setDelivery_address(resultSet.getString("delivery_address"));
+                delivery.setDelivery_status(resultSet.getString("delivery_status"));
+                delivery.setDelivery_received_date(resultSet.getString("delivery_received_date"));
+                delivery.setReceived_by(resultSet.getString("received_by"));
+                deliveries.add(delivery);
+            }
+        }
+        return deliveries;
+    }
+
 
     public Delivery findById(int id) throws SQLException {
         Delivery delivery = null;
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM delivery WHERE delivery_id = ?");
         preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
-        if(resultSet.next()){
-            delivery = new Delivery();
-            delivery.setId(resultSet.getInt("delivery_id"));
-            delivery.setOrder_id(resultSet.getInt("order_id"));
-            delivery.setDelivery_date(resultSet.getString("delivery_date"));
-            delivery.setDelivery_address(resultSet.getString("delivery_address"));
-            delivery.setDelivery_status(resultSet.getString("delivery_status"));
-            delivery.setDelivery_received_date(resultSet.getString("delivery_received_date"));
-            delivery.setReceived_by(resultSet.getString("received_by"));
+        if(resultSet.next()) {
+            int live = resultSet.getInt("Live");
+            if (live == 1) {
+                delivery = new Delivery();
+                delivery.setId(resultSet.getInt("delivery_id"));
+                delivery.setOrder_id(resultSet.getInt("order_id"));
+                delivery.setDelivery_date(resultSet.getString("delivery_date"));
+                delivery.setDelivery_address(resultSet.getString("delivery_address"));
+                delivery.setDelivery_status(resultSet.getString("delivery_status"));
+                delivery.setDelivery_received_date(resultSet.getString("delivery_received_date"));
+                delivery.setReceived_by(resultSet.getString("received_by"));
+            }
         }
         return delivery;
     }
@@ -81,11 +108,14 @@ public class DeliveryRepository {
         return updated;
     }
 
-    public boolean delete(int id) throws SQLException {
-        boolean isDeleted;
-        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("DELETE FROM delivery WHERE delivery_id = ?");
-        preparedStatement.setInt(1, id);
-        isDeleted = preparedStatement.execute();
-        return isDeleted;
+    public boolean delete() throws SQLException {
+
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement(
+                "UPDATE delivery SET Live = ? WHERE delivery_status = ?");
+        preparedStatement.setInt(1, 0);
+        preparedStatement.setString(2, "DELIVERED");
+        int rowsAffected = preparedStatement.executeUpdate();
+        return rowsAffected > 0;
     }
 }
+

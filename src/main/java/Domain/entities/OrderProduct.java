@@ -5,6 +5,7 @@ public class OrderProduct {
     private int order_id;
     private int product_id;
     private int quantity;
+    private int live;
 
     public OrderProduct(Order order, Product product, int quantity) {
         this.order_id = order.getId();
@@ -46,6 +47,14 @@ public class OrderProduct {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getLive() {
+        return live;
+    }
+
+    public void setLive(int live) {
+        this.live = live;
     }
 
     @Override
