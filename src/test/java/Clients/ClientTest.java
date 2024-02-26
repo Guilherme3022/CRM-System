@@ -1,6 +1,6 @@
 package Clients;
 
-import Domain.Client;
+import Domain.entities.Client;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

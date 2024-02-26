@@ -1,6 +1,6 @@
 package Clients;
 
-import Domain.ClientBuilder;
+import Domain.entities.ClientBuilder;
 import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package Domain;
+package Domain.entities;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -7,6 +7,8 @@ import java.time.format.DateTimeParseException;
 
 public class Client {
     private int id;
+    private int live;
+
     private String ssn;
     private String fullName;
     private String email;
@@ -128,10 +130,17 @@ public class Client {
         this.age = age;
     }
 
+    public int getLive() {
+        return live;
+    }
+
+    public void setLive(int live) {
+        this.live = live;
+    }
+
     @Override
     public String toString() {
-        return "Client's data:\nID: " + getId() + "\nName: " + getFullName() + "\nBirth date: " + getBirthDate() + "\nAge: " + getAge() + "\n" +
-                "SSN: " + getSsn() + "\nEmail address: " + getEmail() + "\nPhone number: " + getPhoneNumber() + "\nZip address: " + getAddress()+
-                "\n------------------------------------------------------------------  \n";
+        return String.format("| %-4d | %-20s | %-12s | %-30s | %-30s | %-15s | %-50s | %-4d |",
+                getId(), getFullName(), getBirthDate(), getSsn(), getEmail(), getPhoneNumber(), getAddress(), getAge());
     }
 }
