@@ -73,11 +73,12 @@ public class OrderRepository {
     public boolean insert(Order order) throws SQLException {
         boolean inserted;
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("INSERT INTO `order` " +
-                "(client_id, created_at, order_value, order_status) VALUES (?,?,?,?)");
+                "(client_id, created_at, order_value, order_status, live) VALUES (?,?,?,?,?)");
         preparedStatement.setInt(1, order.getClient_id());
         preparedStatement.setString(2, order.getCreated_at());
         preparedStatement.setDouble(3,  order.getOrder_value());
         preparedStatement.setString(4, order.getOrder_status());
+        preparedStatement.setInt(5, order.getLive());
         inserted = preparedStatement.execute();
         return inserted;
     }

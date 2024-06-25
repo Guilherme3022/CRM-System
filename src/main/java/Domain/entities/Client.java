@@ -52,7 +52,6 @@ public class Client {
 
             int age = currentDate.getYear() - dateOfBirth.getYear();
 
-            // Verifica se o aniversário já ocorreu este ano
             if (dateOfBirth.getMonthValue() > currentDate.getMonthValue() ||
                     (dateOfBirth.getMonthValue() == currentDate.getMonthValue() &&
                             dateOfBirth.getDayOfMonth() > currentDate.getDayOfMonth())) {

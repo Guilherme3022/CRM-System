@@ -21,11 +21,11 @@ public class ClientRepository {
                 Client client = new Client();
                 client.setId(resultSet.getInt("id"));
                 client.setSsn(resultSet.getString("ssn"));
-                client.setFullName(resultSet.getString("full_name"));
+                client.setFullName(resultSet.getString("fullName"));
                 client.setEmail(resultSet.getString("email"));
-                client.setBirthDate(resultSet.getString("birth_date"));
+                client.setBirthDate(resultSet.getString("birthDate"));
                 client.setAddress(resultSet.getString("address"));
-                client.setPhoneNumber(resultSet.getString("phone_number"));
+                client.setPhoneNumber(resultSet.getString("phoneNumber"));
                 clients.add(client);
             }
         }
@@ -43,11 +43,11 @@ public class ClientRepository {
             if (live == 0) {
                 client.setId(resultSet.getInt("id"));
                 client.setSsn(resultSet.getString("ssn"));
-                client.setFullName(resultSet.getString("full_name"));
+                client.setFullName(resultSet.getString("fullName"));
                 client.setEmail(resultSet.getString("email"));
-                client.setBirthDate(resultSet.getString("birth_date"));
+                client.setBirthDate(resultSet.getString("birthDate"));
                 client.setAddress(resultSet.getString("address"));
-                client.setPhoneNumber(resultSet.getString("phone_number"));
+                client.setPhoneNumber(resultSet.getString("phoneNumber"));
                 clients.add(client);
             }
         }
@@ -65,11 +65,11 @@ public class ClientRepository {
             if (live == 1) {
                 client.setId(resultSet.getInt("id"));
                 client.setSsn(resultSet.getString("ssn"));
-                client.setFullName(resultSet.getString("full_name"));
+                client.setFullName(resultSet.getString("fullName"));
                 client.setEmail(resultSet.getString("email"));
-                client.setBirthDate(resultSet.getString("birth_date"));
+                client.setBirthDate(resultSet.getString("birthDate"));
                 client.setAddress(resultSet.getString("address"));
-                client.setPhoneNumber(resultSet.getString("phone_number"));
+                client.setPhoneNumber(resultSet.getString("phoneNumber"));
             } else {
                 System.out.println("inactive individual");
             }
@@ -88,11 +88,11 @@ public class ClientRepository {
             if (live == 1) {
                 client.setId(resultSet.getInt("id"));
                 client.setSsn(resultSet.getString("ssn"));
-                client.setFullName(resultSet.getString("full_name"));
+                client.setFullName(resultSet.getString("fullName"));
                 client.setEmail(resultSet.getString("email"));
-                client.setBirthDate(resultSet.getString("birth_date"));
+                client.setBirthDate(resultSet.getString("birthDate"));
                 client.setAddress(resultSet.getString("address"));
-                client.setPhoneNumber(resultSet.getString("phone_number"));
+                client.setPhoneNumber(resultSet.getString("phoneNumber"));
             } else {
                 System.out.println("inactive individual");
             }
@@ -111,11 +111,11 @@ public class ClientRepository {
             if (live == 1) {
                 client.setId(resultSet.getInt("id"));
                 client.setSsn(resultSet.getString("ssn"));
-                client.setFullName(resultSet.getString("full_name"));
+                client.setFullName(resultSet.getString("fullName"));
                 client.setEmail(resultSet.getString("email"));
-                client.setBirthDate(resultSet.getString("birth_date"));
+                client.setBirthDate(resultSet.getString("birthDate"));
                 client.setAddress(resultSet.getString("address"));
-                client.setPhoneNumber(resultSet.getString("phone_number"));
+                client.setPhoneNumber(resultSet.getString("phoneNumber"));
             } else {
                 System.out.println("inactive individual");
             }
@@ -126,14 +126,15 @@ public class ClientRepository {
     public boolean insert(Client client) throws SQLException {
         boolean inserted;
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("INSERT INTO client " +
-                "(ssn, full_name, email, birth_date, address, phone_number)" +
-                "VALUES (?,?,?,?,?,?)");
+                "(ssn, fullName, email, birthDate, address, phoneNumber, live)" +
+                "VALUES (?,?,?,?,?,?,?)");
         preparedStatement.setString(1, client.getSsn());
         preparedStatement.setString(2, client.getFullName());
         preparedStatement.setString(3, client.getEmail());
         preparedStatement.setString(4, client.getBirthDate());
         preparedStatement.setString(5, client.getAddress());
         preparedStatement.setString(6, client.getPhoneNumber());
+        preparedStatement.setInt(7, client.getLive());
         inserted = preparedStatement.execute();
         return inserted;
     }
@@ -144,7 +145,7 @@ public class ClientRepository {
             return false;
         }
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("UPDATE client SET " +
-                "ssn = ?, full_name = ?, email = ?, birth_date = ?, address = ?, phone_number = ? WHERE id = ?");
+                "ssn = ?, fullName = ?, email = ?, birthDate = ?, address = ?, phoneNumber = ? WHERE id = ?");
         preparedStatement.setString(1, client.getSsn());
         preparedStatement.setString(2, client.getFullName());
         preparedStatement.setString(3, client.getEmail());

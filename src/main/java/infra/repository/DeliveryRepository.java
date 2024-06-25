@@ -80,14 +80,15 @@ public class DeliveryRepository {
     public boolean insert(Delivery delivery) throws SQLException {
         boolean inserted;
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("INSERT INTO delivery " +
-                "(order_id, delivery_date, delivery_address, delivery_status, delivery_received_date, received_by) " +
-                "VALUES (?,?,?,?,?,?)");
+                "(order_id, delivery_date, delivery_address, delivery_status, delivery_received_date, received_by, live) " +
+                "VALUES (?,?,?,?,?,?,?)");
         preparedStatement.setInt(1, delivery.getOrder_id());
         preparedStatement.setString(2, delivery.getDelivery_date());
         preparedStatement.setString(3, delivery.getDelivery_address());
         preparedStatement.setString(4, delivery.getDelivery_status());
         preparedStatement.setString(5, delivery.getDelivery_received_date());
         preparedStatement.setString(6, delivery.getReceived_by());
+        preparedStatement.setInt(7, delivery.getLive());
         inserted = preparedStatement.execute();
         return inserted;
     }

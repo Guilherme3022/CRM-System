@@ -16,7 +16,7 @@ public class OrderProductRepository {
 
     public List<OrderProduct> findAll() throws SQLException {
         List<OrderProduct> orderProducts = new ArrayList<>();
-        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM order_product");
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM orderProduct");
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
             int live = resultSet.getInt("Live");
@@ -33,7 +33,7 @@ public class OrderProductRepository {
     }
     public List<OrderProduct> findAllInactive() throws SQLException {
         List<OrderProduct> orderProducts = new ArrayList<>();
-        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM order_product");
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM orderProduct");
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
             int live = resultSet.getInt("Live");
@@ -51,7 +51,7 @@ public class OrderProductRepository {
 
     public OrderProduct findById(int id) throws SQLException {
         OrderProduct orderProduct = null;
-        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM order_product WHERE id = ?");
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("SELECT * FROM orderProduct WHERE id = ?");
         preparedStatement.setInt(1, id);
         ResultSet resultSet = preparedStatement.executeQuery();
         if(resultSet.next()) {
@@ -69,18 +69,19 @@ public class OrderProductRepository {
 
     public boolean insert(OrderProduct orderProduct) throws SQLException {
         boolean inserted;
-        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("INSERT INTO order_product " +
-                "(order_id, product_id, quantity) VALUES (?,?,?)");
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("INSERT INTO orderProduct " +
+                "(order_id, product_id, quantity, live) VALUES (?,?,?,?)");
         preparedStatement.setInt(1, orderProduct.getOrder_id());
         preparedStatement.setInt(2, orderProduct.getProduct_id());
         preparedStatement.setInt(3, orderProduct.getQuantity());
+        preparedStatement.setInt(4, orderProduct.getLive());
         inserted = preparedStatement.execute();
         return inserted;
     }
 
     public boolean update(OrderProduct orderProduct) throws SQLException {
         boolean updated;
-        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("UPDATE order_product SET " +
+        PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("UPDATE orderProduct SET " +
                 "order_id = ?, product_id = ?, quantity = ? WHERE id = ?");
         preparedStatement.setInt(1, orderProduct.getOrder_id());
         preparedStatement.setInt(2, orderProduct.getProduct_id());
@@ -94,7 +95,7 @@ public class OrderProductRepository {
             return false;
         }
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement(
-                "UPDATE order_product SET Live = ? WHERE id = ?");
+                "UPDATE orderProduct SET Live = ? WHERE id = ?");
         preparedStatement.setInt(1, 0);
         preparedStatement.setInt(2, id);
         int rowsAffected = preparedStatement.executeUpdate();
