@@ -75,10 +75,11 @@ public class ProductRepository {
     public boolean insert(Product product) throws SQLException {
         boolean inserted;
         PreparedStatement preparedStatement = this.connection.getConnection().prepareStatement("INSERT INTO product " +
-                "(name, price)" +
-                "VALUES (?,?)");
+                "(name, price, live)" +
+                "VALUES (?,?,?)");
         preparedStatement.setString(1,product.getName());
         preparedStatement.setDouble(2,product.getPrice());
+        preparedStatement.setInt(3,product.getLive());
         inserted = preparedStatement.execute();
         return inserted;
     }

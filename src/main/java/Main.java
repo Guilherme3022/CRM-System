@@ -626,7 +626,7 @@ public class Main {
         scanner.close();
     }
     private static void printTableIndexClient() {
-        System.out.println("| ID   | Name                  | Birth Date  | SSN                          | Email                         | Phone Number  | Address                                         |");
+        System.out.println("| ID   | Name                 | Birth Date   | SSN                            | Email                          | Phone Number    | Address                                         |");
         System.out.println("-".repeat(167));
     }
     private static void printTableIndexDelivery() {
